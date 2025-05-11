@@ -22,7 +22,7 @@
 //   return (
 //     <div className="shadow-md fixed top-0 w-full z-20">
 //       {/* Top Header */}
-//       <div className="bg-gradient-to-r from-blue-500 to-blue-700 py-4 px-6 flex items-center justify-between rounded-b-2xl shadow-lg relative">
+//       <div className="bg-gradient-to-r from-purple-500 to-purple-700 py-4 px-6 flex items-center justify-between rounded-b-2xl shadow-lg relative">
 //         {/* Logo Left */}
 //         <div className="flex items-center gap-3">
 //           <img
@@ -58,7 +58,7 @@
 
 //       {/* Side Navigation Links (appears from the left on small screens) */}
 //       <nav
-//         className={`fixed top-0 left-0 w-64 h-full bg-blue-700 text-white z-30 transform ${
+//         className={`fixed top-0 left-0 w-64 h-full bg-purple-700 text-white z-30 transform ${
 //           menuOpen ? 'translate-x-0' : '-translate-x-full'
 //         } transition-all duration-500 ease-in-out md:hidden`} // Ensure only visible on small screens
 //       >
@@ -82,7 +82,7 @@
 //                   to={item.path}
 //                   className={({ isActive }) =>
 //                     `flex items-center gap-4 text-lg font-semibold py-2 px-4 rounded-lg transition-all duration-300
-//                     ${isActive ? 'bg-blue-600' : 'hover:bg-blue-600 hover:text-white'}`}
+//                     ${isActive ? 'bg-purple-600' : 'hover:bg-purple-600 hover:text-white'}`}
 //                   onClick={() => setMenuOpen(false)}
 //                 >
 //                   {item.icon}
@@ -96,7 +96,7 @@
 
 //       {/* Main Navigation: Only show on larger screens */}
 //       <nav
-//         className="hidden md:flex md:items-center md:justify-center bg-blue-50 transition-all duration-500 ease-in-out"
+//         className="hidden md:flex md:items-center md:justify-center bg-purple-50 transition-all duration-500 ease-in-out"
 //       >
 //         <ul className="flex flex-row items-center gap-4 py-4 px-6">
 //           {navItems.map((item) => (
@@ -105,8 +105,8 @@
 //                 to={item.path}
 //                 className={({ isActive }) =>
 //                   `relative text-lg font-semibold px-5 py-2 rounded-full transition-all duration-300
-//                    ${isActive ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-blue-600 hover:bg-blue-200 hover:text-blue-800'}
-//                    border border-blue-400`
+//                    ${isActive ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-purple-600 hover:bg-purple-200 hover:text-purple-800'}
+//                    border border-purple-400`
 //                 }
 //                 onClick={() => setMenuOpen(false)}
 //               >
@@ -149,12 +149,12 @@ const Navbar = () => {
   };
 
   // Replace this with your full base64 string
-  const base64Logo = "https://img.freepik.com/premium-vector/logo-event-that-says-biotic-company_1090394-157602.jpg?w=900"; // full string here
+  const base64Logo = "https://agroduka.ke/images/thumbnails/240/240/logos/8/6d0My9wH_400x400.jpg"; // full string here
 
   return (
     <div className="shadow-md fixed top-0 w-full z-20">
       {/* Top Header */}
-      <div className="bg-gradient-to-r from-purple-900 to-purple-900 py-4 px-6 flex items-center justify-between rounded-b-2xl shadow-lg relative">
+      <div className="bg-gradient-to-r from-purple-800 to-purple-600 py-4 px-6 flex items-center justify-between rounded-b-2xl shadow-lg relative">
         {/* Logo Left */}
         <div className="flex items-center gap-3">
           <img
@@ -211,7 +211,7 @@ const Navbar = () => {
                   to={item.path}
                   className={({ isActive }) =>
                     `flex items-center gap-4 text-lg font-semibold py-2 px-4 rounded-lg transition-all duration-300
-                    ${isActive ? 'bg-blue-600' : 'hover:bg-blue-600 hover:text-white'}`
+                    ${isActive ? 'bg-purple-600' : 'hover:bg-purple-600 hover:text-white'}`
                   }
                   onClick={() => setMenuOpen(false)}
                 >
@@ -225,7 +225,7 @@ const Navbar = () => {
       </nav>
 
       {/* Main Navigation (Desktop) */}
-      <nav className="hidden md:flex md:items-center md:justify-center bg-blue-50 transition-all duration-500 ease-in-out">
+      <nav className="hidden md:flex md:items-center md:justify-center bg-purple-50 transition-all duration-500 ease-in-out">
         <ul className="flex flex-row items-center gap-4 py-4 px-6">
           {navItems.map((item) => (
             <li key={item.path}>
@@ -233,8 +233,8 @@ const Navbar = () => {
                 to={item.path}
                 className={({ isActive }) =>
                   `relative text-lg font-semibold px-5 py-2 rounded-full transition-all duration-300
-                   ${isActive ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-blue-600 hover:bg-blue-200 hover:text-blue-800'}
-                   border border-blue-400`
+                   ${isActive ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-purple-600 hover:bg-purple-200 hover:text-purple-800'}
+                   border border-purple-400`
                 }
               >
                 {item.label}

@@ -1,68 +1,45 @@
-import React, { useState } from "react";
-import Footer from "./footer";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { BadgeCheck } from "lucide-react";
 
 const Home = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Logging in with:", username, password);
+  const handleGetStarted = () => {
+    navigate("/form");
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-700 via-purple-800 to-purple-900 text-white">
-      
-      {/* Main Content */}
-      <main className="flex-grow flex items-center justify-center px-2 sm:px-6 lg:px-6 py-11">
-        <div className="w-full max-w-sm sm:max-w-md md:max-w-lg bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-2xl p-5 sm:p-8">
-          <h2 className="text-3xl font-extrabold text-center text-white mb-6">
-            Admin Login
-          </h2>
+    <div className="min-h-screen bg-gradient-to-tr from-violet-100 via-pink-200 to-yellow-100 flex flex-col items-center justify-center text-gray-800 px-6 py-10 md:mt-16">
+      <div className="max-w-3xl w-full text-center mt-16 animate-fade-in">
+        <h1 className="text-5xl font-extrabold mb-6 text-purple-800 drop-shadow-lg">
+          Welcome to Ultravetis Visitor Pass System
+        </h1>
+        <p className="text-lg mb-10 text-purple-700 font-medium">
+          Fast, secure, and easy-to-use system to manage visitor movement efficiently.
+        </p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium mb-1 text-white">
-                Username
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className="w-full px-4 py-2 rounded-lg bg-white bg-opacity-20 border border-white text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-purple-300"
-                placeholder="Enter username"
-              />
+        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-8 text-left space-y-6 shadow-2xl border border-purple-200">
+          {[
+            "Login securely using your gatekeeper credentials.",
+            "Record visitor information upon entry.",
+            "Use the Time Out button when they exit.",
+            "Admin can view, manage, and print visit logs."
+          ].map((step, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <BadgeCheck className="w-5 h-5 text-green-600 mt-1" />
+              <p className="text-md"><strong>Step {i + 1}:</strong> {step}</p>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1 text-white">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2 rounded-lg bg-white bg-opacity-20 border border-white text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-purple-300"
-                placeholder="Enter password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700 transition duration-300 text-white font-semibold py-2 rounded-lg"
-            >
-              Login
-            </button>
-          </form>
+          ))}
         </div>
-      </main>
 
-      {/* Footer */}
-      <footer className="w-full bg-purple-900 text-center text-white py-4">
-        <Footer />
-      </footer>
+        <button
+          onClick={handleGetStarted}
+          className="mt-10 px-10 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 transition duration-300 rounded-full text-lg font-bold text-white shadow-md hover:shadow-xl hover:scale-105"
+        >
+          🚀 Get Started
+        </button>
+      </div>
     </div>
   );
 };
