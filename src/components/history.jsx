@@ -1,144 +1,194 @@
-import React, { useEffect, useState } from 'react';
-import Footer from './footer';
-import {
-  Clock,
-  LogOut,
-  CheckCircle2,
-  TimerOff,
-  LogOutIcon,
-  Search,
-} from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
-export default function History() {
-  const [history, setHistory] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+// Utility to convert data to CSV and trigger download
+const exportToCSV = (data) => {
+  const csvRows = [
+    ["Name", "Department", "Purpose", "Time In", "Time Out"],
+    ...data.map((v) => [
+      v.name,
+      v.department,
+      v.purpose,
+      new Date(v.createdAt).toLocaleString(),
+      v.timeOut ? new Date(v.timeOut).toLocaleString() : "—",
+    ]),
+  ];
+  const csvContent = csvRows.map((e) => e.join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "visitor_history.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
-  // Simulated visitor data
-  useEffect(() => {
-    const data = [
-  { name: 'John Doe', timeIn: '08:15 AM', timeOut: '10:45 AM' },
-  { name: 'Jane Smith', timeIn: '09:00 AM', timeOut: null },
-  { name: 'Samuel M.', timeIn: '09:30 AM', timeOut: '11:00 AM' },
-  { name: 'Alice Johnson', timeIn: '08:45 AM', timeOut: '10:10 AM' },
-  { name: 'Michael Brown', timeIn: '07:50 AM', timeOut: '09:15 AM' },
-  { name: 'Laura Wilson', timeIn: '10:00 AM', timeOut: null },
-  { name: 'David Lee', timeIn: '11:30 AM', timeOut: '12:45 PM' },
-  { name: 'Emma Davis', timeIn: '10:25 AM', timeOut: null },
-  { name: 'James King', timeIn: '09:10 AM', timeOut: '10:40 AM' },
-  { name: 'Olivia Green', timeIn: '08:00 AM', timeOut: null },
-  { name: 'Ethan Scott', timeIn: '07:30 AM', timeOut: '08:30 AM' },
-  { name: 'Sophia Clark', timeIn: '09:50 AM', timeOut: null },
-  { name: 'Daniel Hall', timeIn: '10:40 AM', timeOut: '12:00 PM' },
-  { name: 'Grace Turner', timeIn: '11:10 AM', timeOut: null },
-  { name: 'Lucas Young', timeIn: '08:30 AM', timeOut: '09:45 AM' },
-  { name: 'Ava Adams', timeIn: '07:45 AM', timeOut: null },
-  { name: 'Benjamin Nelson', timeIn: '09:20 AM', timeOut: '10:50 AM' },
-  { name: 'Mia Perez', timeIn: '10:05 AM', timeOut: null },
-];
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
-    const sortedData = data.sort((a, b) => (a.timeIn < b.timeIn ? 1 : -1));
-    setHistory(sortedData);
-  }, []);
+export default function VisitorHistory() {
+  const [visitors, setVisitors] = useState([]);
+  const [showTodayOnly, setShowTodayOnly] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortAsc, setSortAsc] = useState(true);
+  const [filterStatus, setFilterStatus] = useState("all"); // all | active | completed
 
-  const handleSignOut = (index) => {
-    const currentTime = new Date().toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-    const updatedHistory = [...history];
-    updatedHistory[index].timeOut = currentTime;
-    setHistory(updatedHistory);
+  const fetchVisitors = async () => {
+    try {
+      const res = await fetch(`${SERVER_URL}/api/visitors`);
+      const data = await res.json();
+      setVisitors(data);
+    } catch (error) {
+      console.error("Failed to fetch visitors", error);
+      toast.error("Error loading visitors");
+    }
   };
 
-  const filteredHistory = history.filter((visitor) =>
-    visitor.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleTimeOut = async (id) => {
+    try {
+      const res = await fetch(`${SERVER_URL}/api/visitors/visitors/${id}/timeout`, {
+        method: "PUT",
+      });
+      if (!res.ok) throw new Error("Failed to update time out");
+      toast.success("Time out recorded!");
+      fetchVisitors();
+    } catch (error) {
+      console.error("Time out failed", error);
+      toast.error("Could not record time out");
+    }
+  };
+
+  useEffect(() => {
+    fetchVisitors();
+  }, []);
+
+  const today = new Date();
+
+  const filteredVisitors = visitors
+    .filter((v) => {
+      if (!showTodayOnly) return true;
+      const date = new Date(v.createdAt);
+      return (
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
+      );
+    })
+    .filter((v) => {
+      const search = searchTerm.toLowerCase();
+      return (
+        v.name.toLowerCase().includes(search) ||
+        v.department.toLowerCase().includes(search)
+      );
+    })
+    .filter((v) => {
+      if (filterStatus === "active") return !v.timeOut;
+      if (filterStatus === "completed") return !!v.timeOut;
+      return true;
+    })
+    .sort((a, b) => {
+      const t1 = new Date(a.createdAt);
+      const t2 = new Date(b.createdAt);
+      return sortAsc ? t1 - t2 : t2 - t1;
+    });
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-900 text-white mt-12 md:mt-28">
-      <div className="absolute top-0 left-0 right-0 bottom-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 z-0" />
-
-      <div className="flex-grow py-12 px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-4xl font-extrabold text-center mb-6 tracking-wide">
-            🗂️ Visitor History – Today
-          </h1>
-
-          {/* Search Bar */}
-          <div className="mb-8 flex items-center bg-white bg-opacity-90 text-gray-800 rounded-full px-4 py-2 shadow-md max-w-md mx-auto">
-            <Search className="w-5 h-5 text-gray-500 mr-2" />
-            <input
-              type="text"
-              placeholder="Search by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-grow bg-transparent outline-none text-sm"
-            />
-          </div>
-
-          {filteredHistory.length === 0 ? (
-            <p className="text-center text-lg">No matching visitors.</p>
-          ) : (
-            <div className="space-y-6">
-              {filteredHistory.map((visitor, index) => (
-                <div
-                  key={index}
-                  className="bg-white bg-opacity-95 text-gray-800 rounded-xl shadow-lg p-6 flex flex-col sm:flex-row sm:justify-between sm:items-center transition hover:scale-[1.01]"
-                >
-                  <div className="space-y-2">
-                    <p className="text-xl font-semibold flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-purple-700" /> {visitor.name}
-                    </p>
-                    <p className="text-sm flex items-center gap-2 text-purple-600">
-                      <LogOut className="w-4 h-4" /> Time In: {visitor.timeIn}
-                    </p>
-                    <p className="text-sm flex items-center gap-2">
-                      {visitor.timeOut ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4 text-green-600" />
-                          <span className="text-green-600 font-medium">
-                            Time Out: {visitor.timeOut}
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <TimerOff className="w-4 h-4 text-red-600" />
-                          <span className="text-red-600 font-medium">Not Timed Out</span>
-                        </>
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="mt-4 sm:mt-0 flex items-center gap-4">
-                    <span
-                      className={`inline-block px-4 py-1 rounded-full text-sm font-semibold ${
-                        visitor.timeOut
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {visitor.timeOut ? 'Signed Out' : 'Still Inside'}
-                    </span>
-
-                    {!visitor.timeOut && (
-                      <button
-                        onClick={() => handleSignOut(index)}
-                        className="inline-flex items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white text-sm font-semibold px-4 py-2 rounded-full transition"
-                      >
-                        <LogOutIcon className="w-4 h-4" />
-                        Sign Out
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+    <div className="p-4 md:p-6 max-w-7xl mx-auto mt-20 md:mt-36 bg-white shadow-md rounded-xl">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+        <h2 className="text-3xl font-bold text-indigo-800">📋 Visitor History</h2>
+        <div className="flex flex-wrap gap-2 items-center">
+          <input
+            type="text"
+            placeholder="Search name or department..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 px-3 py-2 rounded-md focus:ring focus:ring-indigo-300"
+          />
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="border border-gray-300 px-3 py-2 rounded-md"
+          >
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+          </select>
+          <button
+            onClick={() => setShowTodayOnly((prev) => !prev)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+          >
+            {showTodayOnly ? "Show All Dates" : "Today Only"}
+          </button>
+          <button
+            onClick={() => setSortAsc((prev) => !prev)}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          >
+            Sort {sortAsc ? "↑" : "↓"}
+          </button>
+          <button
+            onClick={() => exportToCSV(filteredVisitors)}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Export CSV
+          </button>
         </div>
       </div>
-{/* 
-      <Footer /> */}
+
+      <div className="text-gray-700 mb-3 font-medium">
+        Showing {filteredVisitors.length}{" "}
+        {showTodayOnly ? "today's" : ""} visitor
+        {filteredVisitors.length !== 1 && "s"} (
+        {filterStatus === "active" ? "active" : filterStatus === "completed" ? "completed" : "all"})
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="min-w-full bg-white text-sm md:text-base">
+          <thead className="bg-indigo-100 text-indigo-800">
+            <tr>
+              <th className="p-3 border">Name</th>
+              <th className="p-3 border">Department</th>
+              <th className="p-3 border">Purpose</th>
+              <th className="p-3 border">Time In</th>
+              <th className="p-3 border">Time Out</th>
+              <th className="p-3 border">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredVisitors.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center text-gray-500 p-6">
+                  No matching visitors found.
+                </td>
+              </tr>
+            ) : (
+              filteredVisitors.map((visitor) => (
+                <tr key={visitor._id} className="text-center hover:bg-gray-50">
+                  <td className="p-3 border">{visitor.name}</td>
+                  <td className="p-3 border">{visitor.department}</td>
+                  <td className="p-3 border">{visitor.purpose}</td>
+                  <td className="p-3 border">
+                    {new Date(visitor.createdAt).toLocaleString()}
+                  </td>
+                  <td className="p-3 border">
+                    {visitor.timeOut
+                      ? new Date(visitor.timeOut).toLocaleString()
+                      : "—"}
+                  </td>
+                  <td className="p-3 border">
+                    {!visitor.timeOut && (
+                      <button
+                        onClick={() => handleTimeOut(visitor._id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                      >
+                        Time Out
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -1,33 +1,59 @@
 import React, { useState } from "react";
-import Footer from "./footer";
-import { LockKeyhole } from "lucide-react"; // Lucide for icon (optional)
+import { LockKeyhole } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const SERVER_URL = process.env.REACT_APP_SERVER_URL;
+
+const Login = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg("");
 
-    // Dummy delay for effect
-    setTimeout(() => {
-      setLoading(false);
-      if (username === "gate123" && password === "pass123") {
-        console.log("Success");
-        // Navigate to dashboard or next screen here
-      } else {
-        setErrorMsg("Invalid username or password.");
+    try {
+      const res = await fetch(`${SERVER_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed");
       }
-    }, 1500);
+
+      // ✅ Store token & user data in localStorage
+      localStorage.setItem("token", data.token); // JWT for future requests
+      localStorage.setItem("user", JSON.stringify(data.user)); // User info
+console.log("Logged in user:", data.user);  
+      // ✅ Optional: You can decode token here if needed (e.g. with jwt-decode)
+
+      // ✅ Redirect based on role
+      if (data.user?.isAdmin) {
+        onLogin(); 
+        navigate("/admin");
+      } else {
+        onLogin(); 
+        navigate("/home");
+      }
+    } catch (error) {
+      setErrorMsg(error.message || "An error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-700 via-purple-800 to-purple-900 text-white mt-32">
-      {/* Main Content */}
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-700 via-purple-800 to-purple-900 text-white">
       <main className="flex-grow flex items-center justify-center px-4 py-10 animate-fade-in">
         <div className="w-full max-w-sm sm:max-w-md md:max-w-lg bg-white bg-opacity-10 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-8">
           <div className="flex flex-col items-center mb-6">
@@ -85,11 +111,6 @@ const Login = () => {
           </form>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="w-full bg-purple-900 text-center text-white py-4">
-        {/* <Footer /> */}
-      </footer>
     </div>
   );
 };

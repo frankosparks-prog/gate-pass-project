@@ -1,32 +1,39 @@
 // import React, { useState } from 'react';
 // import { NavLink } from 'react-router-dom';
-// import { Menu, X, User, Home, FileText, Calendar, Briefcase, Music, BookOpen, Mic } from 'lucide-react'; // Added Lucide icons for nav items
+// import { Clock, Flame, Info } from "lucide-react";
+
+// import {
+//   Menu, X, User, Home, FileText, Mic,
+//   BookOpen
+// } from 'lucide-react';
 
 // const Navbar = () => {
 //   const [menuOpen, setMenuOpen] = useState(false);
 
 //   const navItems = [
 //     { path: '/', label: 'Home', icon: <Home size={20} /> },
-//     { path: '/home', label: 'Home', icon: <FileText size={20} /> },
-//     { path: '/contacts', label: 'Contacts', icon: <Mic size={20} /> },
-//     { path: '/form', label: 'Form', icon: <Mic size={20} /> },
-//     { path: '/footer', label: 'Footer', icon: <Mic size={20} /> },
-  
-    
+//     { path: '/form', label: 'Form', icon: <BookOpen size={20} /> },
+//     {path: '/history', label: 'History', icon: <Clock size={20} /> },
+//     {path: '/fire', label: 'Fire Action', icon: <Flame size={20} /> },
+//     {path: '/about', label: 'About', icon: <Info size={20} /> },
+
 //   ];
 
 //   const toggleMenu = () => {
 //     setMenuOpen(!menuOpen);
 //   };
 
+//   // Replace this with your full base64 string
+//   const base64Logo = "https://agroduka.ke/images/thumbnails/240/240/logos/8/6d0My9wH_400x400.jpg"; // full string here
+
 //   return (
 //     <div className="shadow-md fixed top-0 w-full z-20">
 //       {/* Top Header */}
-//       <div className="bg-gradient-to-r from-purple-500 to-purple-700 py-4 px-6 flex items-center justify-between rounded-b-2xl shadow-lg relative">
+//       <div className="bg-gradient-to-r from-purple-800 to-purple-600 py-4 px-6 flex items-center justify-between rounded-b-2xl shadow-lg relative">
 //         {/* Logo Left */}
 //         <div className="flex items-center gap-3">
 //           <img
-//             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvudYXVN9ver0VIbRz6D-AYmIDbR8xqaIHhw&s" // Replace with your logo URL
+//             src={base64Logo}
 //             alt="Institution Logo"
 //             className="w-14 h-14 object-cover rounded-full border-4 border-white shadow-md"
 //           />
@@ -34,19 +41,17 @@
 
 //         {/* Institution Name Center */}
 //         <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl md:text-3xl font-extrabold text-white tracking-wide">
-//         Our Lady of Mercy Catholic Church Ndaraca
+//           ULTRAVETIS VISITORS PASS
 //         </h1>
 
 //         {/* Right side: Profile + Menu */}
 //         <div className="flex items-center gap-4 text-white z-20">
-//           {/* Profile Icon */}
 //           <div className="hover:text-yellow-300 cursor-pointer transition-all duration-300">
 //             <NavLink to="/profile" className="flex items-center gap-2">
 //               <User size={28} />
-//             </ NavLink>
+//             </NavLink>
 //           </div>
 
-//           {/* Sandwich Menu (only visible on small screens) */}
 //           <div
 //             className="hover:text-yellow-300 cursor-pointer transition-all duration-300 md:hidden"
 //             onClick={toggleMenu}
@@ -56,24 +61,23 @@
 //         </div>
 //       </div>
 
-//       {/* Side Navigation Links (appears from the left on small screens) */}
+//       {/* Side Navigation (Mobile) */}
 //       <nav
 //         className={`fixed top-0 left-0 w-64 h-full bg-purple-700 text-white z-30 transform ${
 //           menuOpen ? 'translate-x-0' : '-translate-x-full'
-//         } transition-all duration-500 ease-in-out md:hidden`} // Ensure only visible on small screens
+//         } transition-all duration-500 ease-in-out md:hidden`}
 //       >
 //         <div className="flex items-center justify-between p-6">
 //           <img
-//             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvudYXVN9ver0VIbRz6D-AYmIDbR8xqaIHhw&s"
+//             src={base64Logo}
 //             alt="Institution Logo"
 //             className="w-12 h-12 object-cover rounded-full border-4 border-white"
 //           />
-//           <h1 className="absolute text-2xl md:text-3xl font-extrabold text-white ml-16">
-//             Church
+//           <h1 className="absolute text-2xl font-extrabold text-white ml-16">
+//             ULTRAVETIS
 //           </h1>
 //         </div>
 
-//         {/* Show individual links when the menu is open (instead of list) */}
 //         {menuOpen && (
 //           <>
 //             {navItems.map((item) => (
@@ -82,7 +86,8 @@
 //                   to={item.path}
 //                   className={({ isActive }) =>
 //                     `flex items-center gap-4 text-lg font-semibold py-2 px-4 rounded-lg transition-all duration-300
-//                     ${isActive ? 'bg-purple-600' : 'hover:bg-purple-600 hover:text-white'}`}
+//                     ${isActive ? 'bg-purple-600' : 'hover:bg-purple-600 hover:text-white'}`
+//                   }
 //                   onClick={() => setMenuOpen(false)}
 //                 >
 //                   {item.icon}
@@ -94,10 +99,8 @@
 //         )}
 //       </nav>
 
-//       {/* Main Navigation: Only show on larger screens */}
-//       <nav
-//         className="hidden md:flex md:items-center md:justify-center bg-purple-50 transition-all duration-500 ease-in-out"
-//       >
+//       {/* Main Navigation (Desktop) */}
+//       <nav className="hidden md:flex md:items-center md:justify-center bg-purple-50 transition-all duration-500 ease-in-out">
 //         <ul className="flex flex-row items-center gap-4 py-4 px-6">
 //           {navItems.map((item) => (
 //             <li key={item.path}>
@@ -108,7 +111,6 @@
 //                    ${isActive ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-purple-600 hover:bg-purple-200 hover:text-purple-800'}
 //                    border border-purple-400`
 //                 }
-//                 onClick={() => setMenuOpen(false)}
 //               >
 //                 {item.label}
 //               </NavLink>
@@ -121,35 +123,78 @@
 // };
 
 // export default Navbar;
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Clock, Flame, Info } from "lucide-react";
 
+import React, { useState, useRef, useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
-  Menu, X, User, Home, FileText, Mic,
-  BookOpen
-} from 'lucide-react';
+  Menu,
+  X,
+  User,
+  Home,
+  FileText,
+  Mic,
+  BookOpen,
+  Clock,
+  Flame,
+  Info,
+  LogOut,
+  Book,
+} from "lucide-react";
+import toast from "react-hot-toast";
 
-const Navbar = () => {
+const Navbar = ({ setIsLoggedIn }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   const navItems = [
-    { path: '/', label: 'Home', icon: <Home size={20} /> },
-    { path: '/form', label: 'Form', icon: <BookOpen size={20} /> },
-    {path: '/history', label: 'History', icon: <Clock size={20} /> },
-    {path: '/fire', label: 'Fire Action', icon: <Flame size={20} /> },
-    {path: '/about', label: 'About', icon: <Info size={20} /> },
-
-
-    
+    { path: "/", label: "Home", icon: <Home size={20} /> },
+    { path: "/form", label: "Form", icon: <BookOpen size={20} /> },
+    { path: "/history", label: "History", icon: <Clock size={20} /> },
+    { path: "/fire", label: "Fire Action", icon: <Flame size={20} /> },
+    { path: "/about", label: "About", icon: <Info size={20} /> },
   ];
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+ const handleLogout = () => {
+  const confirmed = window.confirm("Are you sure you want to log out?");
+  if (confirmed) {
+    // Remove token and user
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+
+    // Show toast
+    toast.success("Logged out successfully");
+
+    // Close dropdown and redirect
+    setDropdownOpen(false);
+    navigate("/");
+  }
+};
+
+
+
+  const handleOccurrenceClick = () => {
+    navigate("/occurrence");
+    setDropdownOpen(false);
   };
 
-  // Replace this with your full base64 string
-  const base64Logo = "https://agroduka.ke/images/thumbnails/240/240/logos/8/6d0My9wH_400x400.jpg"; // full string here
+  const base64Logo =
+    "https://agroduka.ke/images/thumbnails/240/240/logos/8/6d0My9wH_400x400.jpg";
+
+  // Close dropdown if clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="shadow-md fixed top-0 w-full z-20">
@@ -170,12 +215,37 @@ const Navbar = () => {
         </h1>
 
         {/* Right side: Profile + Menu */}
-        <div className="flex items-center gap-4 text-white z-20">
-          <div className="hover:text-yellow-300 cursor-pointer transition-all duration-300">
-            <NavLink to="/profile" className="flex items-center gap-2">
-              <User size={28} />
-            </NavLink>
+        <div
+          className="flex items-center gap-4 text-white z-20 relative"
+          ref={dropdownRef}
+        >
+          <div
+            onClick={toggleDropdown}
+            className="hover:text-yellow-300 cursor-pointer transition-all duration-300 relative"
+          >
+            <User size={28} />
           </div>
+
+          {/* Dropdown Modal */}
+          {dropdownOpen && (
+            <div className="absolute top-14 right-0 mt-2 bg-white text-black rounded-xl shadow-2xl w-56 py-3 z-50 border border-purple-100">
+              <button
+                onClick={handleOccurrenceClick}
+                className="w-full flex items-center gap-3 px-5 py-3 hover:bg-purple-50 transition-all duration-300 text-sm font-medium"
+              >
+                <Book size={20} className="text-purple-600" />
+                <span className="text-gray-800">Occurrence Book</span>
+              </button>
+              <div className="border-t border-gray-200 my-1"></div>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-5 py-3 hover:bg-red-50 transition-all duration-300 text-sm font-medium"
+              >
+                <LogOut size={20} className="text-red-500" />
+                <span className="text-red-600">Log Out</span>
+              </button>
+            </div>
+          )}
 
           <div
             className="hover:text-yellow-300 cursor-pointer transition-all duration-300 md:hidden"
@@ -189,7 +259,7 @@ const Navbar = () => {
       {/* Side Navigation (Mobile) */}
       <nav
         className={`fixed top-0 left-0 w-64 h-full bg-purple-700 text-white z-30 transform ${
-          menuOpen ? 'translate-x-0' : '-translate-x-full'
+          menuOpen ? "translate-x-0" : "-translate-x-full"
         } transition-all duration-500 ease-in-out md:hidden`}
       >
         <div className="flex items-center justify-between p-6">
@@ -203,25 +273,25 @@ const Navbar = () => {
           </h1>
         </div>
 
-        {menuOpen && (
-          <>
-            {navItems.map((item) => (
-              <div key={item.path} className="flex items-center gap-4 py-4 px-6">
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `flex items-center gap-4 text-lg font-semibold py-2 px-4 rounded-lg transition-all duration-300
-                    ${isActive ? 'bg-purple-600' : 'hover:bg-purple-600 hover:text-white'}`
-                  }
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item.icon}
-                  {item.label}
-                </NavLink>
-              </div>
-            ))}
-          </>
-        )}
+        {navItems.map((item) => (
+          <div key={item.path} className="flex items-center gap-4 py-4 px-6">
+            <NavLink
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center gap-4 text-lg font-semibold py-2 px-4 rounded-lg transition-all duration-300
+                ${
+                  isActive
+                    ? "bg-purple-600"
+                    : "hover:bg-purple-600 hover:text-white"
+                }`
+              }
+              onClick={() => setMenuOpen(false)}
+            >
+              {item.icon}
+              {item.label}
+            </NavLink>
+          </div>
+        ))}
       </nav>
 
       {/* Main Navigation (Desktop) */}
@@ -233,8 +303,12 @@ const Navbar = () => {
                 to={item.path}
                 className={({ isActive }) =>
                   `relative text-lg font-semibold px-5 py-2 rounded-full transition-all duration-300
-                   ${isActive ? 'bg-purple-600 text-white shadow-lg' : 'bg-white text-purple-600 hover:bg-purple-200 hover:text-purple-800'}
-                   border border-purple-400`
+                  ${
+                    isActive
+                      ? "bg-purple-600 text-white shadow-lg"
+                      : "bg-white text-purple-600 hover:bg-purple-200 hover:text-purple-800"
+                  }
+                  border border-purple-400`
                 }
               >
                 {item.label}
