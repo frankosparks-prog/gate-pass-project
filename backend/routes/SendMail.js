@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 const router = express.Router();
 
 const departmentEmails = {
-  "Logistics": "logistics@yourdomain.com",
+  "Logistics": "joenjaga50@gmail.com",
   "Human Resource": "hr@yourdomain.com",
   "Production": "production@yourdomain.com",
   "Finance": "mainafrank400@gmail.com",

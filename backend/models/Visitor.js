@@ -25,6 +25,8 @@ const visitorSchema = new mongoose.Schema(
     },
     purpose: { type: String, required: true },
     timeOut: { type: Date }, // <-- Add this line
+    duration: { type: String }, // e.g., "1h 25m"
+
   },
   { timestamps: true } // This adds createdAt and updatedAt automatically
 );

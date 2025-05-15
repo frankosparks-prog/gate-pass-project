@@ -4,14 +4,17 @@ const router = express.Router();
 
 // POST route to submit an occurrence
 router.post("/", async (req, res) => {
-  const { endTime, description, remarks, submittedBy } = req.body; // <-- change this
+  const { endTime, description, remarks, gate, submittedBy } = req.body;
+ // <-- change this
   try {
     const newOccurrence = new Occurrence({
-      endTime,
-      description,
-      remarks,
-      submittedBy, // <-- use correct field name
-    });
+  endTime,
+  description,
+  remarks,
+  gate,
+  submittedBy,
+});
+
     await newOccurrence.save();
     res.status(201).json(newOccurrence);
   } catch (error) {
@@ -21,23 +24,31 @@ router.post("/", async (req, res) => {
 });
 
 
-// GET route to fetch all occurrences
+// GET route to fetch occurrences (all or by specific user if userId query param is given)
 router.get("/", async (req, res) => {
   try {
-    const occurrences = await Occurrence.find().populate("submittedBy");
+    const userId = req.query.userId;
+
+    let filter = {};
+    if (userId) {
+      filter.submittedBy = userId;
+    }
+
+    const occurrences = await Occurrence.find(filter).populate("submittedBy");
     res.status(200).json(occurrences);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+
 // PUT route to update a specific occurrence by ID
 router.put("/:id", async (req, res) => {
-  const { endTime, description, remarks } = req.body;
+  const { endTime, description, remarks, gate } = req.body;
   try {
     const updatedOccurrence = await Occurrence.findByIdAndUpdate(
       req.params.id,
-      { endTime, description, remarks },
+      { endTime, description, remarks, gate },
       { new: true } // return the updated document
     );
     if (!updatedOccurrence) {
