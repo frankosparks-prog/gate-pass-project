@@ -56,9 +56,8 @@
 // };
 
 // export default App;
-
-import React, { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Contacts from './components/contacts';
 import Form from './components/form';
 import Navbar from './components/navbar';
@@ -73,11 +72,24 @@ import Occurrence from './components/Occurrence';
 import { Toaster } from 'react-hot-toast';
 import Signup from './components/SignUp';
 import NotFound from './components/NotFound';
+// Admin components
+import UsersDetails from "./components/Admin/UserDetails";
+import AdminDashboard from "./components/Admin/AdminDashboard";
+import ProtectedRoute from "./components/Admin/ProtectedRoute";
+import VisitordsDetails from './components/Admin/VisitordsDetails';
+import AdminOccurrence from './components/Admin/AdminOccurrence';
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-  return localStorage.getItem('token') ? true : false;
-});
+  const location = useLocation();
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user'));
+  const isLoggedIn = !!token;
+  const isAdmin = user?.isAdmin;
+
+  // Paths where Navbar/Footer should be hidden
+  const hideNavAndFooterPaths = ['/', '/ultra/admin'];
+
+  const shouldHideNavAndFooter = hideNavAndFooterPaths.includes(location.pathname);
 
   return (
     <div>
@@ -101,18 +113,13 @@ const App = () => {
         }}
       />
 
-      {/* Show Navbar only after login */}
-      {isLoggedIn && <Navbar setIsLoggedIn={setIsLoggedIn} />}
+      {/* Conditionally show Navbar */}
+      {!shouldHideNavAndFooter && isLoggedIn && !isAdmin && <Navbar setIsLoggedIn={() => {}} />}
 
       <Routes>
-        {/* Login Route */}
-        <Route
-          path="/"
-          element={<Login onLogin={() => setIsLoggedIn(true)} />}
-        />
+        <Route path="/" element={<Login onLogin={() => {}} />} />
 
-        {/* Protected Routes */}
-        {isLoggedIn && (
+        {isLoggedIn && !isAdmin && (
           <>
             <Route path="/home" element={<Home />} />
             <Route path="/contact" element={<Contacts />} />
@@ -121,15 +128,31 @@ const App = () => {
             <Route path="/fire" element={<Fire />} />
             <Route path="/about" element={<About />} />
             <Route path="/occurrence" element={<Occurrence />} />
-            
           </>
-          
         )}
-        <Route path="*" element={<NotFound  />} />
+
+        {/* Admin Routes */}
+        <Route path="/ultra/admin" element={<Login />} />
+        <Route
+          path="/ultra/admin/dashboard/*"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="users" replace />} />
+          <Route path="users" element={<UsersDetails />} />
+          <Route path="usersignup" element={<Signup />} />
+          <Route path="visitorsdetails" element={<VisitordsDetails />} />
+           <Route path="occurrence" element={<AdminOccurrence />} />
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
-      {/* Show footer only after login */}
-      {isLoggedIn && <Footer />}
+      {/* Conditionally show Footer */}
+      {!shouldHideNavAndFooter && isLoggedIn && !isAdmin && <Footer />}
     </div>
   );
 };

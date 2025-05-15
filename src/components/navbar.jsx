@@ -149,7 +149,7 @@ const Navbar = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
 
   const navItems = [
-    { path: "/", label: "Home", icon: <Home size={20} /> },
+    { path: "/home", label: "Home", icon: <Home size={20} /> },
     { path: "/form", label: "Form", icon: <BookOpen size={20} /> },
     { path: "/history", label: "History", icon: <Clock size={20} /> },
     { path: "/fire", label: "Fire Action", icon: <Flame size={20} /> },

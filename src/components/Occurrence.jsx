@@ -159,6 +159,7 @@
 // export default Occurrence;
 
 // // User login awareness (show who submitted it)
+
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -171,6 +172,7 @@ function Occurrence() {
     endTime: "",
     description: "",
     remarks: "",
+    gate: "",
     submittedBy: user._id,
   });
   const [submissions, setSubmissions] = useState([]);
@@ -190,6 +192,7 @@ function Occurrence() {
       endTime: form.endTime,
       description: form.description,
       remarks: form.remarks,
+      gate: form.gate,
       submittedBy: user?.id || null, // <-- crucial
     };
 
@@ -207,7 +210,7 @@ function Occurrence() {
       );
       setSubmissions([res.data, ...submissions]); // Add the response, not the sent data
       toast.success("Occurrence submitted successfully!");
-      setForm({ endTime: "", description: "", remarks: "" });
+      setForm({ endTime: "", description: "", remarks: "", gate: "" });
     } catch (error) {
       toast.error("Error submitting occurrence.");
       console.error(error.response?.data || error.message);
@@ -243,6 +246,27 @@ function Occurrence() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label
+                htmlFor="gate"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Gate
+              </label>
+              <select
+                id="gate"
+                name="gate"
+                value={form.gate}
+                onChange={handleChange}
+                required
+                className="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+              >
+                <option value="">Select Gate</option>
+                <option value="Gate 1">Gate 1</option>
+                <option value="Gate 2">Gate 2</option>
+              </select>
+            </div>
+
             <div>
               <label
                 htmlFor="endTime"
@@ -327,6 +351,8 @@ function Occurrence() {
                     <th className="text-left px-4 py-2 border-b">
                       Submitted At
                     </th>
+                    <th className="text-left px-4 py-2 border-b">Gate</th>
+
                     <th className="text-left px-4 py-2 border-b">
                       Shift End Time
                     </th>
@@ -345,6 +371,8 @@ function Occurrence() {
                       <td className="px-4 py-2 border-b">
                         {entry.submittedAt}
                       </td>
+                      <td className="px-4 py-2 border-b">{entry.gate}</td>
+
                       <td className="px-4 py-2 border-b">
                         {new Date(entry.endTime).toLocaleString()}
                       </td>
