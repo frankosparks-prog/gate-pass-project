@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Edit, Trash, PlusCircle, Filter } from "lucide-react";
+import { Edit, Trash, PlusCircle } from "lucide-react";
 import { format } from "date-fns";
-import { ClipLoader } from 'react-spinners';
+import { ClipLoader } from "react-spinners";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
-
 const gates = ["Gate 1", "Gate 2"];
 
 const AdminOccurrence = () => {
@@ -14,14 +13,23 @@ const AdminOccurrence = () => {
   const [filterGate, setFilterGate] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [showForm, setShowForm] = useState(false);
+
   const [formData, setFormData] = useState({
-    endTime: "",
-    description: "",
-    remarks: "",
     gate: "Gate 1",
+    endTime: "",
+    conditionOfPremise: "",
+    disarmedBy: "",
+    disarmTime: "",
+    parkingOpeningTime: "",
+    parkingClosingTime: "",
+    phonesLeftWith: "",
+    armedBy: "",
+    armTime: "",
+    unusualOccurrence: "No",
+    unusualDescription: "",
+    remarks: "",
   });
 
-  // Fetch occurrences on mount
   const fetchOccurrences = async () => {
     setLoading(true);
     try {
@@ -38,7 +46,6 @@ const AdminOccurrence = () => {
     fetchOccurrences();
   }, []);
 
-  // Filter occurrences by gate and date
   const filteredOccurrences = occurrences.filter((o) => {
     const gateMatch = filterGate ? o.gate === filterGate : true;
     const dateMatch = filterDate
@@ -47,7 +54,6 @@ const AdminOccurrence = () => {
     return gateMatch && dateMatch;
   });
 
-  // Handle delete
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this occurrence?")) {
       try {
@@ -59,21 +65,32 @@ const AdminOccurrence = () => {
     }
   };
 
-  // Handle form input change
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // Submit new occurrence
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Assume submittedBy comes from auth/user context - hardcoded here for demo
-      const submittedBy = "64a9d8f2c9e7a4567abcd123"; // replace with actual user id
+      const submittedBy = "64a9d8f2c9e7a4567abcd123"; // Replace with actual user ID
       const payload = { ...formData, submittedBy };
       await axios.post(`${SERVER_URL}/api/occurrences`, payload);
       setShowForm(false);
-      setFormData({ endTime: "", description: "", remarks: "", gate: "Gate 1" });
+      setFormData({
+        gate: "Gate 1",
+        endTime: "",
+        conditionOfPremise: "",
+        disarmedBy: "",
+        disarmTime: "",
+        parkingOpeningTime: "",
+        parkingClosingTime: "",
+        phonesLeftWith: "",
+        armedBy: "",
+        armTime: "",
+        unusualOccurrence: "No",
+        unusualDescription: "",
+        remarks: "",
+      });
       fetchOccurrences();
     } catch (err) {
       console.error("Failed to submit occurrence:", err);
@@ -117,18 +134,99 @@ const AdminOccurrence = () => {
 
       {/* Add Occurrence Form */}
       {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="mb-6 border p-4 rounded bg-white shadow"
-        >
+        <form onSubmit={handleSubmit} className="mb-6 border p-4 rounded bg-white shadow">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
             <label className="flex flex-col">
-              End Time
-              <input
+              Condition of Premise
+              <select
                 required
-                type="datetime-local"
-                name="endTime"
-                value={formData.endTime}
+                name="conditionOfPremise"
+                value={formData.conditionOfPremise}
+                onChange={handleChange}
+                className="border rounded px-2 py-1 mt-1"
+              >
+                <option value="">Select</option>
+                <option value="good">In Good Condition</option>
+                <option value="situation">There Was a Situation</option>
+              </select>
+            </label>
+
+            <label className="flex flex-col">
+              Disarmed By
+              <input
+                name="disarmedBy"
+                type="text"
+                value={formData.disarmedBy}
+                onChange={handleChange}
+                className="border rounded px-2 py-1 mt-1"
+                placeholder="Enter name"
+              />
+            </label>
+
+            <label className="flex flex-col">
+              Disarm Time
+              <input
+                name="disarmTime"
+                type="time"
+                value={formData.disarmTime}
+                onChange={handleChange}
+                className="border rounded px-2 py-1 mt-1"
+              />
+            </label>
+
+            <label className="flex flex-col">
+              Parking Opening Time
+              <input
+                name="parkingOpeningTime"
+                type="time"
+                value={formData.parkingOpeningTime}
+                onChange={handleChange}
+                className="border rounded px-2 py-1 mt-1"
+              />
+            </label>
+
+            <label className="flex flex-col">
+              Parking Closing Time
+              <input
+                name="parkingClosingTime"
+                type="time"
+                value={formData.parkingClosingTime}
+                onChange={handleChange}
+                className="border rounded px-2 py-1 mt-1"
+              />
+            </label>
+
+            <label className="flex flex-col md:col-span-2">
+              Who Was Left with Phone 1 and 2 and Their Chargers
+              <input
+                name="phonesLeftWith"
+                type="text"
+                value={formData.phonesLeftWith}
+                onChange={handleChange}
+                className="border rounded px-2 py-1 mt-1"
+                placeholder="Enter name(s)"
+              />
+            </label>
+
+            <label className="flex flex-col">
+              Armed By
+              <input
+                name="armedBy"
+                type="text"
+                value={formData.armedBy}
+                onChange={handleChange}
+                className="border rounded px-2 py-1 mt-1"
+                placeholder="Enter name"
+              />
+            </label>
+
+            <label className="flex flex-col">
+              Arm Time
+              <input
+                name="armTime"
+                type="time"
+                value={formData.armTime}
                 onChange={handleChange}
                 className="border rounded px-2 py-1 mt-1"
               />
@@ -150,17 +248,43 @@ const AdminOccurrence = () => {
               </select>
             </label>
 
-            <label className="flex flex-col md:col-span-2">
-              Description
-              <textarea
+            <label className="flex flex-col">
+              End Time
+              <input
                 required
-                name="description"
-                value={formData.description}
+                type="datetime-local"
+                name="endTime"
+                value={formData.endTime}
                 onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1 resize-none"
-                rows={3}
+                className="border rounded px-2 py-1 mt-1"
               />
             </label>
+
+            <label className="flex flex-col">
+              Was There Any Unusual Occurrence?
+              <select
+                name="unusualOccurrence"
+                value={formData.unusualOccurrence}
+                onChange={handleChange}
+                className="border rounded px-2 py-1 mt-1"
+              >
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </label>
+
+            {formData.unusualOccurrence === "Yes" && (
+              <label className="flex flex-col md:col-span-2">
+                Describe the Occurrence
+                <textarea
+                  name="unusualDescription"
+                  value={formData.unusualDescription}
+                  onChange={handleChange}
+                  className="border rounded px-2 py-1 mt-1"
+                  rows={3}
+                />
+              </label>
+            )}
 
             <label className="flex flex-col md:col-span-2">
               Remarks
@@ -168,7 +292,7 @@ const AdminOccurrence = () => {
                 name="remarks"
                 value={formData.remarks}
                 onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1 resize-none"
+                className="border rounded px-2 py-1 mt-1"
                 rows={2}
               />
             </label>
@@ -186,8 +310,8 @@ const AdminOccurrence = () => {
       {/* Occurrences Table */}
       {loading ? (
         <div className="p-6 flex justify-center items-center h-40">
-      <ClipLoader color="#ec4899" size={50} />
-    </div>
+          <ClipLoader color="#8b5cf6" size={50} />
+        </div>
       ) : filteredOccurrences.length === 0 ? (
         <p>No occurrences found.</p>
       ) : (
@@ -195,27 +319,25 @@ const AdminOccurrence = () => {
           <table className="min-w-full table-auto border-collapse">
             <thead className="bg-gray-100">
               <tr>
-                <th className="border px-4 py-2 text-left">Description</th>
-                <th className="border px-4 py-2 text-left">Remarks</th>
                 <th className="border px-4 py-2 text-left">Gate</th>
                 <th className="border px-4 py-2 text-left">End Time</th>
-                <th className="border px-4 py-2 text-left">Submitted By</th>
-                <th className="border px-4 py-2 text-left">Submitted At</th>
+                <th className="border px-4 py-2 text-left">Condition</th>
+                <th className="border px-4 py-2 text-left">Disarmed By</th>
+                <th className="border px-4 py-2 text-left">Armed By</th>
+                <th className="border px-4 py-2 text-left">Submitted</th>
                 <th className="border px-4 py-2 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredOccurrences.map((occ) => (
                 <tr key={occ._id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{occ.description}</td>
-                  <td className="border px-4 py-2">{occ.remarks || "-"}</td>
                   <td className="border px-4 py-2">{occ.gate}</td>
                   <td className="border px-4 py-2">
                     {format(new Date(occ.endTime), "dd/MM/yyyy HH:mm")}
                   </td>
-                  <td className="border px-4 py-2">
-                    {occ.submittedBy?.username || occ.submittedBy?.email || "Unknown"}
-                  </td>
+                  <td className="border px-4 py-2">{occ.conditionOfPremise}</td>
+                  <td className="border px-4 py-2">{occ.disarmedBy || "-"}</td>
+                  <td className="border px-4 py-2">{occ.armedBy || "-"}</td>
                   <td className="border px-4 py-2">
                     {format(new Date(occ.submittedAt), "dd/MM/yyyy HH:mm")}
                   </td>
