@@ -339,7 +339,7 @@ function Occurrence() {
         </div>
 
         {/* Table for Past Submissions */}
-        {submissions.length > 0 && (
+        {/* {submissions.length > 0 && (
           <div className="mt-10 bg-white shadow-lg rounded-lg p-6">
             <h2 className="text-xl font-semibold text-purple-700 mb-4">
               Past Submissions
@@ -394,7 +394,7 @@ function Occurrence() {
               </table>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
