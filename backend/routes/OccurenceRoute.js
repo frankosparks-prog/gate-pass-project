@@ -1,12 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const Occurrence = require("../models/Occurrence");
+const Occurrence = require("../models/Occurence");
 
-// GET all occurrences
 router.get("/", async (req, res) => {
-  const occurrences = await Occurrence.find().populate("submittedBy");
-  res.json(occurrences);
+  try {
+    const occurrences = await Occurrence.find().populate("submittedBy");
+    res.json(occurrences);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching occurrences" });
+  }
 });
+
 
 // POST new occurrence
 router.post("/", async (req, res) => {
