@@ -18,7 +18,7 @@ const Occurrence = () => {
     unusualOccurrence: 'No',
     unusualDescription: '',
     remarks: '',
-    submittedBy: JSON.parse(localStorage.getItem('user'))?._id || null,
+    submittedBy: JSON.parse(localStorage.getItem('user'))?.id || null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -69,8 +69,8 @@ const Occurrence = () => {
           <label className="block text-sm font-medium text-purple-700 mb-1">I am reporting the occurrences from:</label>
           <select name="gate" value={form.gate} onChange={handleChange} required className="w-full p-2 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
             <option value="" disabled>Select gate</option>
-            <option value="Gate One">Gate One</option>
-            <option value="Gate Two">Gate Two</option>
+            <option value="Gate One">Gate 1</option>
+            <option value="Gate Two">Gate 2</option>
           </select>
         </div>
 

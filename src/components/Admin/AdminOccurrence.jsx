@@ -1,40 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Edit, Trash, PlusCircle } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { format } from "date-fns";
 import { ClipLoader } from "react-spinners";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
-const gates = ["Gate 1", "Gate 2"];
+const gates = [ "Gate One", "Gate Two"];
+const ITEMS_PER_PAGE = 10;
 
 const AdminOccurrence = () => {
   const [occurrences, setOccurrences] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterGate, setFilterGate] = useState("");
   const [filterDate, setFilterDate] = useState("");
-  const [showForm, setShowForm] = useState(false);
-
-  const [formData, setFormData] = useState({
-    gate: "Gate 1",
-    endTime: "",
-    conditionOfPremise: "",
-    disarmedBy: "",
-    disarmTime: "",
-    parkingOpeningTime: "",
-    parkingClosingTime: "",
-    phonesLeftWith: "",
-    armedBy: "",
-    armTime: "",
-    unusualOccurrence: "No",
-    unusualDescription: "",
-    remarks: "",
-  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchOccurrences = async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${SERVER_URL}/api/occurrences`);
-      setOccurrences(res.data);
+      setOccurrences(res.data || []);
     } catch (error) {
       console.error("Failed to fetch occurrences:", error);
     } finally {
@@ -47,12 +33,27 @@ const AdminOccurrence = () => {
   }, []);
 
   const filteredOccurrences = occurrences.filter((o) => {
-    const gateMatch = filterGate ? o.gate === filterGate : true;
-    const dateMatch = filterDate
-      ? format(new Date(o.submittedAt), "yyyy-MM-dd") === filterDate
+    const gateMatch = filterGate
+      ? o.gate?.toLowerCase().includes(filterGate.toLowerCase())
       : true;
-    return gateMatch && dateMatch;
+    const dateMatch = filterDate
+      ? o.submittedAt &&
+        format(new Date(o.submittedAt), "yyyy-MM-dd") === filterDate
+      : true;
+    const searchMatch = searchTerm
+      ? [o.gate, o.remarks, o.submittedBy?.username]
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      : true;
+
+    return gateMatch && dateMatch && searchMatch;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredOccurrences.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentItems = filteredOccurrences.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this occurrence?")) {
@@ -65,44 +66,12 @@ const AdminOccurrence = () => {
     }
   };
 
-  const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const submittedBy = "64a9d8f2c9e7a4567abcd123"; // Replace with actual user ID
-      const payload = { ...formData, submittedBy };
-      await axios.post(`${SERVER_URL}/api/occurrences`, payload);
-      setShowForm(false);
-      setFormData({
-        gate: "Gate 1",
-        endTime: "",
-        conditionOfPremise: "",
-        disarmedBy: "",
-        disarmTime: "",
-        parkingOpeningTime: "",
-        parkingClosingTime: "",
-        phonesLeftWith: "",
-        armedBy: "",
-        armTime: "",
-        unusualOccurrence: "No",
-        unusualDescription: "",
-        remarks: "",
-      });
-      fetchOccurrences();
-    } catch (err) {
-      console.error("Failed to submit occurrence:", err);
-    }
-  };
-
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Occurrences Admin</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">All Occurrences</h1>
 
-      {/* Filters and Add Button */}
-      <div className="flex flex-wrap items-center gap-4 mb-4">
+      {/* Filters + Search */}
+      <div className="flex flex-wrap items-center gap-4 mb-6">
         <select
           className="border rounded px-3 py-2"
           value={filterGate}
@@ -110,9 +79,7 @@ const AdminOccurrence = () => {
         >
           <option value="">All Gates</option>
           {gates.map((g) => (
-            <option key={g} value={g}>
-              {g}
-            </option>
+            <option key={g} value={g}>{g}</option>
           ))}
         </select>
 
@@ -123,244 +90,106 @@ const AdminOccurrence = () => {
           onChange={(e) => setFilterDate(e.target.value)}
         />
 
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="ml-auto flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
-        >
-          <PlusCircle size={20} />
-          {showForm ? "Cancel" : "Add Occurrence"}
-        </button>
+        <input
+          type="text"
+          placeholder="Search by gate, remarks, or user"
+          className="border rounded px-3 py-2 flex-1"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-      {/* Add Occurrence Form */}
-      {showForm && (
-        <form onSubmit={handleSubmit} className="mb-6 border p-4 rounded bg-white shadow">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-            <label className="flex flex-col">
-              Condition of Premise
-              <select
-                required
-                name="conditionOfPremise"
-                value={formData.conditionOfPremise}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-              >
-                <option value="">Select</option>
-                <option value="good">In Good Condition</option>
-                <option value="situation">There Was a Situation</option>
-              </select>
-            </label>
-
-            <label className="flex flex-col">
-              Disarmed By
-              <input
-                name="disarmedBy"
-                type="text"
-                value={formData.disarmedBy}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-                placeholder="Enter name"
-              />
-            </label>
-
-            <label className="flex flex-col">
-              Disarm Time
-              <input
-                name="disarmTime"
-                type="time"
-                value={formData.disarmTime}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-              />
-            </label>
-
-            <label className="flex flex-col">
-              Parking Opening Time
-              <input
-                name="parkingOpeningTime"
-                type="time"
-                value={formData.parkingOpeningTime}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-              />
-            </label>
-
-            <label className="flex flex-col">
-              Parking Closing Time
-              <input
-                name="parkingClosingTime"
-                type="time"
-                value={formData.parkingClosingTime}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-              />
-            </label>
-
-            <label className="flex flex-col md:col-span-2">
-              Who Was Left with Phone 1 and 2 and Their Chargers
-              <input
-                name="phonesLeftWith"
-                type="text"
-                value={formData.phonesLeftWith}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-                placeholder="Enter name(s)"
-              />
-            </label>
-
-            <label className="flex flex-col">
-              Armed By
-              <input
-                name="armedBy"
-                type="text"
-                value={formData.armedBy}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-                placeholder="Enter name"
-              />
-            </label>
-
-            <label className="flex flex-col">
-              Arm Time
-              <input
-                name="armTime"
-                type="time"
-                value={formData.armTime}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-              />
-            </label>
-
-            <label className="flex flex-col">
-              Gate
-              <select
-                name="gate"
-                value={formData.gate}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-              >
-                {gates.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="flex flex-col">
-              End Time
-              <input
-                required
-                type="datetime-local"
-                name="endTime"
-                value={formData.endTime}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-              />
-            </label>
-
-            <label className="flex flex-col">
-              Was There Any Unusual Occurrence?
-              <select
-                name="unusualOccurrence"
-                value={formData.unusualOccurrence}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-              >
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-              </select>
-            </label>
-
-            {formData.unusualOccurrence === "Yes" && (
-              <label className="flex flex-col md:col-span-2">
-                Describe the Occurrence
-                <textarea
-                  name="unusualDescription"
-                  value={formData.unusualDescription}
-                  onChange={handleChange}
-                  className="border rounded px-2 py-1 mt-1"
-                  rows={3}
-                />
-              </label>
-            )}
-
-            <label className="flex flex-col md:col-span-2">
-              Remarks
-              <textarea
-                name="remarks"
-                value={formData.remarks}
-                onChange={handleChange}
-                className="border rounded px-2 py-1 mt-1"
-                rows={2}
-              />
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-          >
-            Submit
-          </button>
-        </form>
-      )}
-
-      {/* Occurrences Table */}
+      {/* Table */}
       {loading ? (
-        <div className="p-6 flex justify-center items-center h-40">
+        <div className="flex justify-center items-center h-40">
           <ClipLoader color="#8b5cf6" size={50} />
         </div>
-      ) : filteredOccurrences.length === 0 ? (
-        <p>No occurrences found.</p>
+      ) : currentItems.length === 0 ? (
+        <p className="text-center text-gray-500">No occurrences found.</p>
       ) : (
-        <div className="overflow-x-auto shadow rounded bg-white">
-          <table className="min-w-full table-auto border-collapse">
-            <thead className="bg-gray-100">
+        <div className="overflow-x-auto bg-white shadow-md rounded">
+          <table className="min-w-full text-sm text-left">
+            <thead className="bg-gray-100 text-xs uppercase text-gray-700">
               <tr>
-                <th className="border px-4 py-2 text-left">Gate</th>
-                <th className="border px-4 py-2 text-left">End Time</th>
-                <th className="border px-4 py-2 text-left">Condition</th>
-                <th className="border px-4 py-2 text-left">Disarmed By</th>
-                <th className="border px-4 py-2 text-left">Armed By</th>
-                <th className="border px-4 py-2 text-left">Submitted</th>
-                <th className="border px-4 py-2 text-center">Actions</th>
+                <th className="px-4 py-2">Gate</th>
+                <th className="px-4 py-2">End Time</th>
+                <th className="px-4 py-2">Disarmed By</th>
+                <th className="px-4 py-2">Disarm Time</th>
+                <th className="px-4 py-2">Armed By</th>
+                <th className="px-4 py-2">Arm Time</th>
+                <th className="px-4 py-2">Parking Open</th>
+                <th className="px-4 py-2">Parking Close</th>
+                <th className="px-4 py-2">Phones With</th>
+                <th className="px-4 py-2">Condition</th>
+                <th className="px-4 py-2">Unusual?</th>
+                <th className="px-4 py-2">Remarks</th>
+                <th className="px-4 py-2">Submitted By</th>
+                <th className="px-4 py-2">Submitted At</th>
+                <th className="px-4 py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredOccurrences.map((occ) => (
-                <tr key={occ._id} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{occ.gate}</td>
-                  <td className="border px-4 py-2">
-                    {format(new Date(occ.endTime), "dd/MM/yyyy HH:mm")}
+              {currentItems.map((o) => (
+                <tr key={o._id} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-2">{o.gate || "—"}</td>
+                  <td className="px-4 py-2">
+                    {o.endTime ? format(new Date(o.endTime), "dd/MM/yyyy HH:mm") : "—"}
                   </td>
-                  <td className="border px-4 py-2">{occ.conditionOfPremise}</td>
-                  <td className="border px-4 py-2">{occ.disarmedBy || "-"}</td>
-                  <td className="border px-4 py-2">{occ.armedBy || "-"}</td>
-                  <td className="border px-4 py-2">
-                    {format(new Date(occ.submittedAt), "dd/MM/yyyy HH:mm")}
+                  <td className="px-4 py-2">{o.disarmedBy || "—"}</td>
+                  <td className="px-4 py-2">{o.disarmTime || "—"}</td>
+                  <td className="px-4 py-2">{o.armedBy || "—"}</td>
+                  <td className="px-4 py-2">{o.armTime || "—"}</td>
+                  <td className="px-4 py-2">{o.parkingOpeningTime || "—"}</td>
+                  <td className="px-4 py-2">{o.parkingClosingTime || "—"}</td>
+                  <td className="px-4 py-2">{o.phonesLeftWith || "—"}</td>
+                  <td className="px-4 py-2">{o.conditionOfPremise || "—"}</td>
+                  <td className="px-4 py-2">{o.unusualOccurrence || "—"}</td>
+                  <td className="px-4 py-2">{o.remarks || "—"}</td>
+                  <td className="px-4 py-2">{o.submittedBy?.username || "—"}</td>
+                  <td className="px-4 py-2">
+                    {o.submittedAt
+                      ? format(new Date(o.submittedAt), "dd/MM/yyyy HH:mm")
+                      : "—"}
                   </td>
-                  <td className="border px-4 py-2 text-center space-x-2">
+                  <td className="px-4 py-2 flex items-center gap-2">
                     <button
-                      onClick={() => alert("Edit functionality coming soon!")}
+                      onClick={() => alert("Edit coming soon")}
                       className="text-blue-600 hover:text-blue-800"
-                      title="Edit Occurrence"
+                      title="Edit"
                     >
-                      <Edit size={18} />
+                      <Edit size={16} />
                     </button>
                     <button
-                      onClick={() => handleDelete(occ._id)}
+                      onClick={() => handleDelete(o._id)}
                       className="text-red-600 hover:text-red-800"
-                      title="Delete Occurrence"
+                      title="Delete"
                     >
-                      <Trash size={18} />
+                      <Trash size={16} />
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 space-x-2">
+          {[...Array(totalPages)].map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentPage(idx + 1)}
+              className={`px-3 py-1 rounded ${
+                currentPage === idx + 1
+                  ? "bg-purple-600 text-white"
+                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              }`}
+            >
+              {idx + 1}
+            </button>
+          ))}
         </div>
       )}
     </div>
