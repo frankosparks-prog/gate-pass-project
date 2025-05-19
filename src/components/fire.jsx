@@ -7,7 +7,6 @@ import {
   FireExtinguisher,
   ArrowRightCircle,
 } from 'lucide-react';
-import Footer from './footer'; // ✅ Ensure this path is correct
 
 export default function Fire() {
   const actions = [
@@ -74,11 +73,6 @@ export default function Fire() {
           </a>
         </div>
       </div>
-
-      {/* ✅ Footer */}
-      {/* <div className="w-full mt-20">
-        <Footer />
-      </div> */}
     </div>
   );
 }

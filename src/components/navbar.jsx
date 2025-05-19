@@ -131,8 +131,6 @@ import {
   X,
   User,
   Home,
-  FileText,
-  Mic,
   BookOpen,
   Clock,
   Flame,

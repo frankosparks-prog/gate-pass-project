@@ -177,7 +177,6 @@
 // export default About;
 
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Handshake, BarChart, Briefcase, Mail, Phone } from "lucide-react";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;

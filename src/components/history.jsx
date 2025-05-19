@@ -1,46 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-const calculateDuration = (start, end) => {
-  if (!start || !end) return null;
+// const calculateDuration = (start, end) => {
+//   if (!start || !end) return null;
 
-  const ms = new Date(end) - new Date(start);
-  const minutes = Math.floor(ms / 60000);
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
+//   const ms = new Date(end) - new Date(start);
+//   const minutes = Math.floor(ms / 60000);
+//   const hours = Math.floor(minutes / 60);
+//   const remainingMinutes = minutes % 60;
 
-  return `${hours}h ${remainingMinutes}m`;
-};
+//   return `${hours}h ${remainingMinutes}m`;
+// };
 // Utility to convert data to CSV and trigger download
-const exportToCSV = (data) => {
-  const csvRows = [
-    ["Name", "Department", "Purpose", "Time In", "Time Out", "Duration"],
-    ...data.map((v) => {
-      const timeIn = new Date(v.createdAt);
-      const timeOut = v.timeOut ? new Date(v.timeOut) : null;
-      const duration =
-        v.duration || (v.timeOut ? calculateDuration(timeIn, timeOut) : "—");
+// const exportToCSV = (data) => {
+//   const csvRows = [
+//     ["Name", "Department", "Purpose", "Time In", "Time Out", "Duration"],
+//     ...data.map((v) => {
+//       const timeIn = new Date(v.createdAt);
+//       const timeOut = v.timeOut ? new Date(v.timeOut) : null;
+//       const duration =
+//         v.duration || (v.timeOut ? calculateDuration(timeIn, timeOut) : "—");
 
-      return [
-        v.name,
-        v.department,
-        v.purpose,
-        timeIn.toLocaleString(),
-        timeOut ? timeOut.toLocaleString() : "—",
-        duration,
-      ];
-    }),
-  ];
+//       return [
+//         v.name,
+//         v.department,
+//         v.purpose,
+//         timeIn.toLocaleString(),
+//         timeOut ? timeOut.toLocaleString() : "—",
+//         duration,
+//       ];
+//     }),
+//   ];
 
-  const csvContent = csvRows.map((e) => e.join(",")).join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "visitor_history.csv";
-  a.click();
-  URL.revokeObjectURL(url);
-};
+//   const csvContent = csvRows.map((e) => e.join(",")).join("\n");
+//   const blob = new Blob([csvContent], { type: "text/csv" });
+//   const url = URL.createObjectURL(blob);
+//   const a = document.createElement("a");
+//   a.href = url;
+//   a.download = "visitor_history.csv";
+//   a.click();
+//   URL.revokeObjectURL(url);
+// };
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 

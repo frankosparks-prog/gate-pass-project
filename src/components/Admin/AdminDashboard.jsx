@@ -1,5 +1,5 @@
 // src/components/Admin/AdminDashboard.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { NavLink, Outlet, Navigate, useNavigate } from "react-router-dom";
 import {
   Users2,
@@ -39,6 +39,17 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   /* ───────── Auto-logout on token expiry (simple client-side check) ───────── */
+  // const handleLogout = () => {
+  //   localStorage.removeItem("adminToken");
+  //   localStorage.removeItem("user");
+  //   navigate("/"); // back to admin login
+  // };
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("user");
+    navigate("/"); // Redirect to admin login
+  }, [navigate]);
+
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
     if (!token) return;
@@ -52,13 +63,9 @@ const AdminDashboard = () => {
     } catch (_) {
       /* silently ignore malformed token */
     }
-  }, []);
+  }, [handleLogout]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("user");
-    navigate("/"); // back to admin login
-  };
+  
 
   /* ───────────────────────────── Component ───────────────────────────── */
   return (
