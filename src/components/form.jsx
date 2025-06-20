@@ -336,9 +336,16 @@ export default function VisitorForm() {
       }
 
       // 3) Compose an SMS message
-      const smsMessage = `New Visitor Registration:
+      const smsMessage = `New Visitor Alert:
 Name: ${formData.name}
-Officer: ${formData.officer}
+Phone: ${formData.phone}
+Address: ${formData.address}
+ID Number: ${formData.idNumber}
+Vehicle Reg: ${formData.vehicleReg}
+Company: ${formData.company}
+Visitor Type: ${formData.visitorType}
+Officer to Visit: ${formData.officer}
+Department: ${formData.department}
 Purpose: ${formData.purpose}`;
 
       // 4) Send SMS to the office (instead of an email)
