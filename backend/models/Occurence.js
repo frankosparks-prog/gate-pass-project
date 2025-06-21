@@ -10,10 +10,9 @@ const occurrenceSchema = new mongoose.Schema({
     required: true,
   },
   conditionOfPremise: String,
+  armedSection: String,
   disarmedBy: String,
   disarmTime: String,
-  parkingOpeningTime: String,
-  parkingClosingTime: String,
   phonesLeftWith: String,
   armedBy: String,
   armTime: String,
@@ -35,3 +34,6 @@ const occurrenceSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model("Occurrence", occurrenceSchema);
+
+// parkingOpeningTime: String,
+// parkingClosingTime: String,

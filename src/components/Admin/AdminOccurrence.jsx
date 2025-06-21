@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { ClipLoader } from "react-spinners";
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
-const gates = [ "Gate One", "Gate Two"];
+const gates = [ "Gate One", "Gate Two", "Godown 14"];
 const ITEMS_PER_PAGE = 10;
 
 const AdminOccurrence = () => {
@@ -117,8 +117,9 @@ const AdminOccurrence = () => {
                 <th className="px-4 py-2">Disarm Time</th>
                 <th className="px-4 py-2">Armed By</th>
                 <th className="px-4 py-2">Arm Time</th>
-                <th className="px-4 py-2">Parking Open</th>
-                <th className="px-4 py-2">Parking Close</th>
+                <th className="px-4 py-2">Armed Section</th>
+                {/* <th className="px-4 py-2">Parking Open</th>
+                <th className="px-4 py-2">Parking Close</th> */}
                 <th className="px-4 py-2">Phones With</th>
                 <th className="px-4 py-2">Condition</th>
                 <th className="px-4 py-2">Unusual?</th>
@@ -139,8 +140,9 @@ const AdminOccurrence = () => {
                   <td className="px-4 py-2">{o.disarmTime || "—"}</td>
                   <td className="px-4 py-2">{o.armedBy || "—"}</td>
                   <td className="px-4 py-2">{o.armTime || "—"}</td>
-                  <td className="px-4 py-2">{o.parkingOpeningTime || "—"}</td>
-                  <td className="px-4 py-2">{o.parkingClosingTime || "—"}</td>
+                  <td className="px-4 py-2">{o.armedSection || "—"}</td>
+                  {/* <td className="px-4 py-2">{o.parkingOpeningTime || "—"}</td>
+                  <td className="px-4 py-2">{o.parkingClosingTime || "—"}</td> */}
                   <td className="px-4 py-2">{o.phonesLeftWith || "—"}</td>
                   <td className="px-4 py-2">{o.conditionOfPremise || "—"}</td>
                   <td className="px-4 py-2">{o.unusualOccurrence || "—"}</td>
