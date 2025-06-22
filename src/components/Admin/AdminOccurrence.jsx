@@ -117,11 +117,10 @@ const AdminOccurrence = () => {
                 <th className="px-4 py-2">Disarm Time</th>
                 <th className="px-4 py-2">Armed By</th>
                 <th className="px-4 py-2">Arm Time</th>
-                <th className="px-4 py-2">Armed Section</th>
                 {/* <th className="px-4 py-2">Parking Open</th>
                 <th className="px-4 py-2">Parking Close</th> */}
+                <th className="px-4 py-2">Premise</th>
                 <th className="px-4 py-2">Phones With</th>
-                <th className="px-4 py-2">Condition</th>
                 <th className="px-4 py-2">Unusual?</th>
                 <th className="px-4 py-2">Remarks</th>
                 <th className="px-4 py-2">Submitted By</th>
@@ -140,11 +139,10 @@ const AdminOccurrence = () => {
                   <td className="px-4 py-2">{o.disarmTime || "—"}</td>
                   <td className="px-4 py-2">{o.armedBy || "—"}</td>
                   <td className="px-4 py-2">{o.armTime || "—"}</td>
-                  <td className="px-4 py-2">{o.armedSection || "—"}</td>
                   {/* <td className="px-4 py-2">{o.parkingOpeningTime || "—"}</td>
                   <td className="px-4 py-2">{o.parkingClosingTime || "—"}</td> */}
+                  <td className="px-4 py-2">{o.premise || "—"}</td>
                   <td className="px-4 py-2">{o.phonesLeftWith || "—"}</td>
-                  <td className="px-4 py-2">{o.conditionOfPremise || "—"}</td>
                   <td className="px-4 py-2">{o.unusualOccurrence || "—"}</td>
                   <td className="px-4 py-2">{o.remarks || "—"}</td>
                   <td className="px-4 py-2">{o.submittedBy?.username || "—"}</td>

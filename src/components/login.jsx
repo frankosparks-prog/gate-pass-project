@@ -34,7 +34,7 @@ const Login = ({ onLogin }) => {
       // ✅ Store token & user data in localStorage
       localStorage.setItem("token", data.token); // JWT for future requests
       localStorage.setItem("user", JSON.stringify(data.user)); // User info
-      console.log("Logged in user:", data.user);
+      // console.log("Logged in user:", data.user);
       // ✅ Optional: You can decode token here if needed (e.g. with jwt-decode)
 
       // ✅ Redirect based on role

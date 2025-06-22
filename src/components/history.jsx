@@ -57,7 +57,7 @@ export default function VisitorHistory() {
       const data = await res.json();
       setVisitors(data);
     } catch (error) {
-      console.error("Failed to fetch visitors", error);
+      // console.error("Failed to fetch visitors", error);
       toast.error("Error loading visitors");
     }
   };
@@ -74,7 +74,7 @@ export default function VisitorHistory() {
       toast.success("Time out recorded!");
       fetchVisitors();
     } catch (error) {
-      console.error("Time out failed", error);
+      // console.error("Time out failed", error);
       toast.error("Could not record time out");
     }
   };
