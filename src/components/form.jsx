@@ -324,7 +324,7 @@ export default function VisitorForm() {
       }
 
       const savedVisitor = await response.json();
-      // console.log("Visitor saved:", savedVisitor);
+      console.log("Visitor saved:", savedVisitor);
 
       // 2) Determine which office phone to notify
       const officePhone = departmentPhones[formData.department];
